@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <br>
+    <h1>Blocked Channels</h1>
+    <br>
+    <br>
+    <div class="tooltip" style="margin-bottom: 12px; display: inline-block;">
+        <label>
+            <input type="checkbox" id="hideBlockedCheckbox">
+            Hide blocked channels
+        </label>
+        <span class="tooltiptext">If checked, you won't see the option to undo blocking a channel.</span>
+    </div>
+
+
+    <div style="display: flex; gap: 24px; align-items: flex-start;">
+        <div>
+            <p>Channels to block:</p>
+            <select id="blacklistSelect" class="list-box" multiple></select><br>
+            <button id="removeButton">Remove Selected >></button>
+        </div>
+        <div>
+            <p>Channels to allow:</p>
+            <select id="whitelistSelect" class="list-box" multiple></select><br>
+            <button id="addButton"><< Add Selected</button>
+        </div>
+        <div>
+            <p>Custom channels:</p>
+            <textarea id="customListBox" class="list-box"></textarea><br>
+            <button id="saveCustomButton">Save channels</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
