@@ -173,10 +173,8 @@ document.getElementById('saveCustomButton').addEventListener('click', () => {
 });
 document.getElementById('hideBlockedCheckbox').addEventListener('change', (event) => {
     if (event.currentTarget.checked) {
-        alert('checked');
         browser.storage.local.set({ 'hideBlocked': true });
     } else {
-        alert('not checked');
         browser.storage.local.set({ 'hideBlocked': false });
     }
 });
