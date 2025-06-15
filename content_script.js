@@ -4,12 +4,36 @@ const recommendationTag = 'ytd-compact-video-renderer';
 const channelTag = 'ytd-channel-name';
 const interactionTag = 'button';
 const menuBoxTag = 'ytd-menu-service-item-renderer';
+const signInTag = 'ytd-masthead button#avatar-btn';
 
 let blacklist = [];
 let fullList = [];
 let hideBlocked = false;
 
 const observeOptions = { childList: true, attributes: false, subtree: true };
+
+// Function to check if the user is signed in
+function isUserSignedIn(tag, maxRetries=10, delay=300) {
+    console.debug('Checking if user is signed in...');
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const check = () => {
+            const avatarBtn = document.querySelector(tag);
+            if (avatarBtn) {
+                return resolve(true);
+            }
+            attempts++;
+            if (attempts < maxRetries) {
+                setTimeout(check, delay);
+            }
+            else {
+                console.debug('User not signed in after maximum attempts.');
+                reject(false);
+            }
+        };
+        check();
+    });
+}
 
 // Wait for menu item
 function waitForMenuItem(labelText, maxRetries=10, delay=300) {
@@ -135,7 +159,6 @@ async function loadHiddenState() {
     }
 }
 
-
 // Load the blacklist and start observing
 async function loadBlacklistFromStorage() {
     const storedBlacklist = await browser.storage.local.get('blacklist');
@@ -154,9 +177,18 @@ async function loadBlacklistFromStorage() {
 
     // Load the state of the hidden checkbox
     loadHiddenState();
-    
-    // Start the observer after loading the blacklist and hidden state
-    startMainObserver();
+
+    // Check if the user is signed in
+    (async () => {
+        try {
+            const signedIn = await isUserSignedIn(signInTag);
+            if (signedIn) {
+                startMainObserver();
+            }
+        } catch (e) {
+            console.debug("User is not signed in. Observer not started.");
+        }
+    })();
 }
 
 
