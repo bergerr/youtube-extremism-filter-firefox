@@ -4,19 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <link href="style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
     <br>
     <h1>Blocked Channels</h1>
     <br>
+    <div>
+        <p>Here you can manage the channels you want to block or allow. Channels in the blacklist will not be shown in the recommended videos.</p>
+        <p>To remove a channel from the blacklist, select it and click "Remove Selected".</p>
+        <p>You can also block custom channels by entering their names in the text area below and clicking "Save channels".</p>
+        <p>Once a channel has been blocked it won't be recommended, regardless of which list it is on.</p>
+    </div>
     <br>
     <div class="tooltip" style="margin-bottom: 12px; display: inline-block;">
         <label>
             <input type="checkbox" id="hideBlockedCheckbox">
             Hide blocked channels
+            <i class="fas fa-circle-info" title="If checked, you won't see the option to undo blocking a channel." style="margin-left: 6px; color: #555; cursor: help;"></i>
         </label>
-        <span class="tooltiptext">If checked, you won't see the option to undo blocking a channel.</span>
     </div>
 
 
@@ -24,12 +31,12 @@
         <div>
             <p>Channels to block:</p>
             <select id="blacklistSelect" class="list-box" multiple></select><br>
-            <button id="removeButton">Remove Selected >></button>
+            <button id="removeButton">Whitelist Selected >></button>
         </div>
         <div>
             <p>Channels to allow:</p>
             <select id="whitelistSelect" class="list-box" multiple></select><br>
-            <button id="addButton"><< Add Selected</button>
+            <button id="addButton"><< Blacklist Selected</button>
         </div>
         <div>
             <p>Custom channels:</p>
