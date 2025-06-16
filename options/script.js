@@ -9,7 +9,7 @@ const checkbox = document.getElementById('hideBlockedCheckbox');
  * Loads the blacklist from storage (or a file if it doesn't exist).
  */
 async function loadBlacklist() {
-    storage = await chrome.storage.local.get(['blacklist', 'whitelist', 'customList']);
+    storage = await browser.storage.local.get(['blacklist', 'whitelist', 'customList']);
     if (storage.blacklist) {
         const lines = storage.blacklist.trim().split('\n').filter(Boolean);
 
@@ -50,7 +50,7 @@ async function loadBlacklist() {
 async function loadBlockFile() {
     try {
         // Fetch the blacklist file from the extension's lists folder
-        const res = await fetch(chrome.runtime.getURL('lists/blacklist.txt'));
+        const res = await fetch(browser.runtime.getURL('lists/blacklist.txt'));
         const text = await res.text();
 
         // Split the file into lines, removing empty lines
@@ -67,7 +67,7 @@ async function loadBlockFile() {
         }
 
         // This is the first time the blacklist is loaded, so we save it to storage
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             action: 'saveBlacklist',
             content: lines.join('\n')
         })
@@ -102,13 +102,13 @@ function moveBetweenLists(sourceBox, targetBox) {
     }
 
     // Send the updated source list to the background script to save
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         action: actionSource,
         content: remaining.join('\n')
     }).then(() => {
         // Send the target list to the background service to save
         currentList = currentList.concat(selected).sort(); // Combine lists and sort
-        chrome.runtime.sendMessage({
+        browser.runtime.sendMessage({
             action: actionTarget,
             content: currentList.join('\n')
         })
@@ -147,7 +147,7 @@ function saveCustomList(customText) {
     const lines = customValue.split('\n').filter(Boolean);
 
     // Send the custom list to the background script to save
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
         action: 'saveCustomList',
         content: lines.join('\n')
     })
@@ -166,9 +166,9 @@ document.getElementById('saveCustomButton').addEventListener('click', () => {
 });
 document.getElementById('hideBlockedCheckbox').addEventListener('change', (event) => {
     if (event.currentTarget.checked) {
-        chrome.storage.local.set({ 'hideBlocked': true });
+        browser.storage.local.set({ 'hideBlocked': true });
     } else {
-        chrome.storage.local.set({ 'hideBlocked': false });
+        browser.storage.local.set({ 'hideBlocked': false });
     }
 });
 
