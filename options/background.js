@@ -1,12 +1,9 @@
 browser.runtime.onMessage.addListener((message) => {
     if (message.action === 'saveBlacklist') {
-        console.log('saving bl');
         return browser.storage.local.set({ 'blacklist': message.content });
     } else if (message.action === 'saveWhitelist') {
-        console.log('saving wl');
         return browser.storage.local.set({ 'whitelist': message.content });
     } else if (message.action === 'saveCustomList') {
-        console.log('saving cl');
         return browser.storage.local.set({ 'customList': message.content });
     }
 });
