@@ -9,12 +9,13 @@
 
 <body>
     <br>
-    <h1>Blocked Channels</h1>
+    <h1>Youtube Extremism Filter</h1>
     <br>
     <div>
         <p>Here you can manage the channels you want to block or allow. Channels in the blacklist will not be shown in the recommended videos.</p>
-        <p>To remove a channel from the blacklist, select it and click "Remove Selected".</p>
-        <p>You can also block custom channels by entering their names in the text area below and clicking "Save channels".</p>
+        <p>To remove a channel from the blacklist, select it and click <b>Whitelist selected</b>.</p>
+        <p>To add a removed channel back to the blacklist, select it and click <b>Blacklist selected</b>.</p>
+        <p>You can also add channels to the blacklist by entering their names in the <b>Custom channels</b> section and clicking <b>Save channels</b>.</p>
         <p>Once a channel has been blocked it won't be recommended, regardless of which list it is on.</p>
     </div>
     <br>
@@ -31,16 +32,19 @@
         <div>
             <p>Channels to block:</p>
             <select id="blacklistSelect" class="list-box" multiple></select><br>
-            <button id="removeButton">Whitelist Selected >></button>
+            <button id="removeButton">Whitelist selected >></button>
         </div>
         <div>
             <p>Channels to allow:</p>
             <select id="whitelistSelect" class="list-box" multiple></select><br>
-            <button id="addButton"><< Blacklist Selected</button>
+            <button id="addButton"><< Blacklist selected</button>
         </div>
         <div>
-            <p>Custom channels:</p>
-            <textarea id="customListBox" class="list-box"></textarea><br>
+            <p>
+                Custom channels:
+                <i class="fas fa-circle-info" title="Add channels not in the blacklist by typing them here. Each channel should be entered on its own line." style="margin-left: 6px; color: #555; cursor: help;"></i>
+            </p>
+            <textarea id="customListBox" class="list-box" placeholder="eg. Ben Shapiro&#013;&#010;Jordan Peterson"></textarea><br>
             <button id="saveCustomButton">Save channels</button>
         </div>
     </div>
