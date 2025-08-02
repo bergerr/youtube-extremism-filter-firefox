@@ -2,6 +2,11 @@
     "manifest_version": 3,
     "name": "youtube-extremism-filter",
     "description": "A filter for extremist content on YouTube",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{D2A8B582-3A7C-4482-8782-3A0FECEF8546}"
+        }
+    },
     "version": "1.0.0",
     "icons": {
         "32": "icons/icon-32.png",
