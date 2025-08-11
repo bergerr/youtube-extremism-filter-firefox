@@ -2,85 +2,46 @@
 const blacklistBox = document.getElementById('blacklistSelect');
 const whitelistBox = document.getElementById('whitelistSelect');
 const customListBox = document.getElementById('customListBox');
-const checkbox = document.getElementById('hideBlockedCheckbox');
 
 
-/**
- * Loads the blacklist from storage (or a file if it doesn't exist).
- */
+// Loads the blacklist from storage (or a file if it doesn't exist).
 async function loadBlacklist() {
-    storage = await browser.storage.local.get(['blacklist', 'whitelist', 'customList']);
-    if (storage.blacklist) {
-        const lines = storage.blacklist.trim().split('\n').filter(Boolean);
+    let blacklist = await getFromStorage('blacklist');
+    let whitelist = await getFromStorage('whitelist');
+    let customlist = await getFromStorage('customlist');
 
-        blacklistBox.innerHTML = ''; // Clear current options
-
-        // Add each line as an option in the select box
-        for (const line of lines) {
-            const option = document.createElement('option');
-            option.value = line;
-            option.textContent = line;
-            blacklistBox.appendChild(option);
-        }
-    } else {
-        // If no blacklist in storage, load from file
-        loadBlockFile();
+    // If no blacklist in storage, pull it from github and save it to localstorage
+    if (!blacklist) {
+        blacklist = await updateBlacklistIfNeeded(true);
     }
-    if (storage.whitelist) {
-        const lines = storage.whitelist.trim().split('\n').filter(Boolean);
 
+    blacklistBox.innerHTML = ''; // Clear current options
+
+    // Add each line as an option in the select box
+    for (const line of blacklist) {
+        const option = document.createElement('option');
+        option.value = line;
+        option.textContent = line;
+        blacklistBox.appendChild(option);
+    }
+
+    if (whitelist) {
         whitelistBox.innerHTML = ''; // Clear current options
 
         // Add each line as an option in the select box
-        for (const line of lines) {
+        for (const line of whitelist) {
             const option = document.createElement('option');
             option.value = line;
             option.textContent = line;
             whitelistBox.appendChild(option);
         }
     }
-    if (storage.customList) {
-        customListBox.innerHTML = storage.customList; // Clear current options
+    if (customlist) {
+        customListBox.innerHTML = customlist; // Clear current options
     }
 }
 
-/**
- * Loads the blacklist from blacklist.txt and populates the select box.
- */
-async function loadBlockFile() {
-    try {
-        // Fetch the blacklist file from the extension's lists folder
-        const res = await fetch(browser.runtime.getURL('lists/blacklist.txt'));
-        const text = await res.text();
-
-        // Split the file into lines, removing empty lines
-        const lines = text.trim().split('\n').filter(Boolean);
-
-        blacklistBox.innerHTML = ''; // Clear current options
-
-        // Add each line as an option in the select box
-        for (const line of lines) {
-            const option = document.createElement('option');
-            option.value = line;
-            option.textContent = line;
-            blacklistBox.appendChild(option);
-        }
-
-        // This is the first time the blacklist is loaded, so we save it to storage
-        browser.runtime.sendMessage({
-            action: 'saveBlacklist',
-            content: lines.join('\n')
-        })
-    } catch (err) {
-        // Handle errors (e.g., file not found)
-        console.error('Failed to load blacklist:', err);
-    }
-}
-
-
-/**
- * Removes selected items from the blacklist and saves the updated list.
- */
+// Removes selected items from the blacklist and saves the updated list.
 function moveBetweenLists(sourceBox, targetBox) {
     // Get selected options to remove
     const selected = Array.from(sourceBox.selectedOptions).map(opt => opt.value);
@@ -93,6 +54,7 @@ function moveBetweenLists(sourceBox, targetBox) {
     let currentList = Array.from(targetBox.options).map(opt => opt.value)
 
     // decide which action to take based on the source box
+    let actionSource, actionTarget;
     if (sourceBox.id === 'blacklistSelect') {
         actionSource = 'saveBlacklist';
         actionTarget = 'saveWhitelist';
@@ -104,13 +66,13 @@ function moveBetweenLists(sourceBox, targetBox) {
     // Send the updated source list to the background script to save
     browser.runtime.sendMessage({
         action: actionSource,
-        content: remaining.join('\n')
+        content: remaining
     }).then(() => {
         // Send the target list to the background service to save
         currentList = currentList.concat(selected).sort(); // Combine lists and sort
         browser.runtime.sendMessage({
             action: actionTarget,
-            content: currentList.join('\n')
+            content: currentList
         })
     }).then(() => {
         // repopulate the select box with the updated source list
@@ -136,9 +98,7 @@ function moveBetweenLists(sourceBox, targetBox) {
     });
 }
 
-/**
- * Converts the custom text to a secondary blacklist.
- */
+// Converts the custom text to a secondary blacklist.
 function saveCustomList(customText) {
     // Get the custom text value
     const customValue = customText.value.trim();
@@ -150,7 +110,7 @@ function saveCustomList(customText) {
     browser.runtime.sendMessage({
         action: 'saveCustomList',
         content: lines.join('\n')
-    })
+    });
 }
 
 // Attach event listeners to all the buttons
@@ -163,13 +123,6 @@ document.getElementById('addButton').addEventListener('click', () => {
 document.getElementById('saveCustomButton').addEventListener('click', () => {
     // moveBetweenLists(whitelistBox, blacklistBox)
     saveCustomList(customListBox);
-});
-document.getElementById('hideBlockedCheckbox').addEventListener('change', (event) => {
-    if (event.currentTarget.checked) {
-        browser.storage.local.set({ 'hideBlocked': true });
-    } else {
-        browser.storage.local.set({ 'hideBlocked': false });
-    }
 });
 
 // Initial load of the blacklist when the page loads

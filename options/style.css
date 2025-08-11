@@ -14,12 +14,7 @@ button {
 }
 
 p {
-    width: 80%;
-}
-
-.status {
-    margin-top: 10px;
-    color: green;
+    width: 100%;
 }
 
 .tooltip {
